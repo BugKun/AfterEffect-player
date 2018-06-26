@@ -1,0 +1,36 @@
+{
+  "name": "AfterEffect-player",
+  "version": "0.9.0",
+  "description": "AfterEffect-player is a music player which is modeled after a AE music player.",
+  "main": "./dist/AfterEffectPlayer.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "webpack-dev-server --open",
+    "build": "cross-env NODE_ENV=production webpack -p",
+    "lint": "cross-env NODE_ENV=development eslint --ext .js ./",
+    "webpack:watch": "webpack --watch"
+  },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/BugKun/AfterEffect-player.git"
+    },
+  "author": "BugKun",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.4",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "cross-env": "^5.1.6",
+    "eslint": "^4.19.1",
+    "eslint-loader": "^2.0.0",
+    "eslint-plugin-import": "^2.12.0",
+    "happypack": "^5.0.0",
+    "webpack": "^4.11.1",
+    "webpack-cli": "^2.1.3",
+    "webpack-dev-server": "^3.1.4"
+  }
+}

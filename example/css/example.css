@@ -1,0 +1,93 @@
+﻿html,body{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    overflow: auto;
+    -webkit-overflow-scrolling : touch;
+    background-image: url(../img/AfterEffect-player-bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.fieldset {
+    padding: 1rem;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: .25rem;
+}
+
+legend{
+    width: auto;
+}
+
+.alert.alert-dismissible {
+    display: none;
+    text-align: left;
+}
+
+.urlMode {
+     display: none;
+ }
+.urlMode.input{
+    flex: 1;
+}
+
+.custom-file-label{
+    overflow: hidden;
+}
+
+.fileWrapper-container, .fileWrapper{
+    height: 100%;
+}
+
+.fileWrapper-content {
+    text-align: center;
+    margin: 1vw;
+}
+
+.dragContainer{
+    user-select: none;
+}
+
+.player {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 88;
+}
+
+.FPS {
+    display: none;
+    position: fixed;
+    top: 1vw;
+    left: 1vw;
+    z-index: 99;
+    font-size: 1vw;
+}
+
+.FPS strong {
+    color: #F90;
+}
+
+.FPS .value{
+    font-weight: bold;
+}
+.FPS .col-auto button.close{
+    position: relative;
+    padding:0;
+    color: inherit;
+}
+
+@media screen and (max-width: 1280px) {
+    #FPS-gauge {
+        display: none;
+    }
+    .FPS {
+        font-size: unset;
+    }
+}

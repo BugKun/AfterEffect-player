@@ -1,0 +1,217 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AfterEffectPlayer Demo</title>
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico" media="screen">
+    <link rel="stylesheet" href="./css/bootstrap.css">
+    <link rel="stylesheet" href="./css/example.css">
+    <script src="../dist/AfterEffectPlayer.js"></script>
+    <script src="./js/jquery.js"></script>
+    <script src="./js/popper.js"></script>
+    <script src="./js/bootstrap.js"></script>
+    <script src="./js/echarts.js"></script>
+</head>
+<body>
+<div id="app">
+    <!--fileWrapper-->
+    <div class="container fileWrapper-container">
+        <div class="row justify-content-md-center align-items-center fileWrapper">
+            <div class="fileWrapper-content">
+                <!--title-->
+                <div class="jumbotron jumbotron-fluid">
+                    <div class="container">
+                        <h2 class="display-4">AfterEffect player by chau (powered by HTML5 Audio API)</h2>
+                        <p class="lead">press <kbd>space</kbd> to <code class="highlighter-rouge">play</code> or <code class="highlighter-rouge">pause</code><br>
+                            press <kbd>↑/↓</kbd> to <code class="highlighter-rouge">volume up</code> or <code class="highlighter-rouge">volume down</code></p>
+                    </div>
+                </div>
+                <!--error content-->
+                <div class="alert alert-danger alert-dismissible fade show error-content" role="alert">
+                    <h4 class="alert-heading">ERROR!</h4>
+                    <p id="error-text"></p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!--SRC Detected-->
+                <div class="alert alert-warning alert-dismissible fade show src-detected" role="alert">
+                    <h4 class="alert-heading">WARNING!</h4>
+                    <p id="src-detected-text"></p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!--uploadedFile-->
+                <div class="uploadedFile">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Choose a music file to play
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item localFile" href="javascript:;">Choose a music file to play</a>
+                                <a class="dropdown-item urlFile" href="javascript:;">Text a audio URL to play</a>
+                            </div>
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="uploadedFile" accept="audio/*">
+                            <label class="custom-file-label" for="uploadedFile">Choose a music file</label>
+                        </div>
+                        <input type="text" class="form-control urlMode input" aria-label="Text input with segmented dropdown button" id="fileUrl">
+                        <div class="input-group-append urlMode">
+                            <button class="btn btn-primary" type="button" id="loadFile">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+                <!--dragContainer-->
+                <div class="jumbotron jumbotron-fluid dragContainer">
+                    <div class="container">
+                        <h2 class="display-5">Drag&amp;drop a music file there to play</h2>
+                    </div>
+                </div>
+                <!--demo and options-->
+                <div>
+                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        <div class="btn-group" role="group">
+                            <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Choose a demo
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                <a class="dropdown-item" href="javascript:;" id="demo-music-1">Load music demo 1</a>
+                                <a class="dropdown-item" href="javascript:;" id="demo-music-2">Load music demo 2</a>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#advance-options">Advance options</button>
+                    </div>
+                </div>
+                <!--requirements list button-->
+                <button type="button" class="btn btn-warning btn-lg btn-block" data-toggle="modal" data-target="#requirements-list" style="margin-top: 1vw; white-space: unset;">
+                    This <i>AfterEffect-player</i> is Real-time calculation. Thus, for your best experience, the minimum system requirements(60FPS) is here.
+                </button>
+            </div>
+        </div>
+    </div>
+    <!--requirements list modal-->
+    <div class="modal fade" id="requirements-list" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">System Requirements</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>OS: </strong>Windows 7 or later</p>
+                    <p><strong>Browser: </strong>Chrome 50+ / Firefox 50+ / Opera 37+ / Edge</p>
+                    <p><strong>Processor: </strong>Intel I3 4130 or better</p>
+                    <p><strong>Memory: </strong>2GB or better</p>
+                    <p><strong>Graphics: </strong>Intel HD Graphics 4400 or better</p>
+                    <p><strong>Sound Card: </strong>DirectSound® compatible sound card</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--advance options modal-->
+    <div class="modal fade" id="advance-options" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Advance Options</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <fieldset class="fieldset mb-3 py-2">
+                        <legend>FPS</legend>
+                        <div class="mb-2 d-sm-inline-block">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="Show-FPS">
+                                <label class="custom-control-label" for="Show-FPS">Show FPS</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="Log-FPS">
+                                <label class="custom-control-label" for="Log-FPS">Log FPS</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <!--uploadedImage-->
+                    <fieldset class="fieldset mb-3">
+                        <legend>Background</legend>
+                        <div class="input-group mb-2 uploadedImage">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Choose a image
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item localFile" href="javascript:;">Choose a picture</a>
+                                    <a class="dropdown-item urlFile" href="javascript:;">Text a image URL to display</a>
+                                </div>
+                            </div>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="uploadedImage" accept="image/*">
+                                <label class="custom-file-label" for="uploadedImage">Change background</label>
+                            </div>
+                            <input type="text" class="form-control urlMode input" aria-label="Text input with segmented dropdown button" id="imageUrl">
+                            <div class="input-group-append urlMode">
+                                <button class="btn btn-primary" type="button" id="loadImage">Confirm</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" name="reset" type="button">Reset</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--display FPS line-->
+    <div class="modal fade" id="FPS-line-container" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">FPS Line</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="FPS-line" style="width: 766px"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--player-->
+    <div class="player"></div>
+    <!--FPS-->
+    <div class="alert alert-primary fade show FPS" role="alert">
+        <div class="row">
+            <div class="col-auto mr-auto">
+                <strong>FPS:</strong>
+                <span class="value">0</span>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <button type="button" class="close" id="toggle-FPS-gauge" style="margin-right: 1vw">
+                    <span class="hide-FPS-gauge">∧</span>
+                    <span class="show-FPS-gauge">∨</span>
+                </button>
+            </div>
+        </div>
+        <div id="FPS-gauge"></div>
+    </div>
+</div>
+</body>
+<script src="./js/example.js"></script>
+</html>
