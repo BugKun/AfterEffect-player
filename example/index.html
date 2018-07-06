@@ -158,13 +158,15 @@
                         <button type="button" class="close" aria-label="Close" @click="FPSPanelShow = false">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <button type="button" class="close" style="margin-right: 1vw" @click="FPSGaugeChartShowToggle">
-                            {{ FPSGaugeChartShow? "∧" : "∨" }}
-                        </button>
+                        <transition name="fade">
+                            <button type="button" class="close" style="margin-right: 1vw" v-if="!screenLimit" @click="FPSGaugeChartShowToggle">
+                                {{ FPSGaugeChartShow? "∧" : "∨" }}
+                            </button>
+                        </transition>
                     </div>
                 </div>
                 <transition name="fade">
-                    <echarts :options="FPS_Gauge_Chart" class="FPS-gauge" ref="FPSGauge" v-if="FPSPanelShow && FPSGaugeChartShow && !screenLimit" />
+                    <echarts :options="FPS_Gauge_Chart" class="FPS-gauge" ref="FPSGauge" v-if="FPSGaugeChartShow && !screenLimit" />
                 </transition>
             </b-alert>
         </transition>
