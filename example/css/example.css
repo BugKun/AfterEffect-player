@@ -12,6 +12,13 @@ body {
     background-size: cover;
 }
 
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
+}
+
 .fieldset {
     padding: 1rem;
     border: 1px solid rgba(0,0,0,.125);
@@ -23,7 +30,6 @@ legend{
 }
 
 .alert.alert-dismissible {
-    display: none;
     text-align: left;
 }
 
@@ -49,10 +55,10 @@ legend{
 
 .dragContainer{
     user-select: none;
+    -ms-user-select: none;
 }
 
 .player {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -62,7 +68,6 @@ legend{
 }
 
 .FPS {
-    display: none;
     position: fixed;
     top: 1vw;
     left: 1vw;
@@ -84,9 +89,6 @@ legend{
 }
 
 @media screen and (max-width: 1280px) {
-    #FPS-gauge {
-        display: none;
-    }
     .FPS {
         font-size: unset;
     }

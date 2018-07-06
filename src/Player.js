@@ -7,6 +7,7 @@ class Player extends Drawer{
 
         this.node = null;
         this.dragging = false;
+        this.isInit = false;
 
         this.listenMousePosition();
 
@@ -25,10 +26,12 @@ class Player extends Drawer{
         super.setAudio(file);
         this.drawerInit(node, file, options);
 
+        this.isInit = true;
         return this;
     }
 
     changeAudio(file){
+        if(!this.isInit) return;
         super.setAudio(file);
         return this;
     }

@@ -86,11 +86,10 @@ class AudioAnalyser {
             this.audio.style.display = "none";
             this.audio.onerror = e => {
                 throw  new Error(e);
-            }
+            };
             if(this.options.onended) this.audio.onended = this.options.onended;
         }
         this.audio.src = file;
-
         return this;
     }
 
@@ -121,7 +120,6 @@ class AudioAnalyser {
         splitter.connect(analyserL, 0, 0);        // ChannelSplitterNode -> GainNode (Left  Channel)
         splitter.connect(analyserR, 1, 0);        // ChannelSplitterNode -> GainNode (Right Channel)
         audioNode.connect(audioContext.destination);  // ChannelMergerNode -> AudioDestinationNode (Output)
-
 
 
         this.analyser = {
