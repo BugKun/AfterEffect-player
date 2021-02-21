@@ -8,7 +8,7 @@ Vue.component('aftereffect-player', {
     },
     mounted: function() {
         this.init();
-        window.addEventListener("keydown", this.keydown);
+        document.body.addEventListener("keydown", this.keydown.bind(this));
     },
     watch: {
         url: function(curVal) {
@@ -19,7 +19,7 @@ Vue.component('aftereffect-player', {
         }
     },
     beforeDestory: function() {
-        window.removeEventListener("keydown", this.keydown);
+        document.body.removeEventListener("keydown", this.keydown.bind(this));
     },
     data: function() {
         return {
@@ -44,6 +44,8 @@ Vue.component('aftereffect-player', {
         },
         keydown: function(event) {
             var that = this;
+            console.log(213123)
+            this.player.play();
             console.log(this);
             if (event.keyCode === 32 && that.player.audio) {
                 (that.player.audio.paused) ? that.player.play(): that.player.pause();

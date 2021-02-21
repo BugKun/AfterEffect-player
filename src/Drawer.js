@@ -114,7 +114,8 @@ class Drawer extends AudioAnalyser {
     }
 
     drawFrequencyRender(analyser) {
-        const { frequencyLeft, frequencyRight } = analyser.getByteFrequency(), { canvasWidth, canvasHeight } = (this.options.DynamicResolution) ? this.getSize() : { canvasWidth: this.canvasWidth, canvasHeight: this.canvasHeight },
+        const { frequencyLeft, frequencyRight } = analyser.getByteFrequency(),
+            { canvasWidth, canvasHeight } = (this.options.DynamicResolution) ? this.getSize() : { canvasWidth: this.canvasWidth, canvasHeight: this.canvasHeight },
             cxt = this.ctx;
 
 
