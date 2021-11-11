@@ -7,169 +7,58 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>AfterEffectPlayer Demo</title>
     <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico" media="screen">
-    <link rel="stylesheet" href="./css/bootstrap.min.css">
-    <link rel="stylesheet" href="./css/bootstrap-vue.css">
     <link rel="stylesheet" href="./css/example.css">
-    <script src="../dist/AfterEffectPlayer.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://s2.pstatp.com/cdn/element-ui/2.15.0/theme-chalk/index.min.css">
+    <script src="./dist/AfterEffectPlayer.js"></script>
     <script src="./js/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script src="https://s1.pstatp.com/cdn/element-ui/2.15.0/index.min.js"></script>
     <script src="./js/polyfill.js"></script>
-    <script src="./js/bootstrap-vue.js"></script>
     <script src="./js/Vue-AfterEffectPlayer.js"></script>
-    <script src="./js/echarts.js"></script>
-    <script src="./js/Vue-echarts.js"></script>
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" :class="{black: isPlayed}">
         <transition name="fade">
-            <div class="container fileWrapper-container" v-show="!isPlayed">
-                <div class="row justify-content-md-center align-items-center fileWrapper">
-                    <div class="fileWrapper-content">
-                        <!--title-->
-                        <b-jumbotron>
-                            <h2 class="display-4">AfterEffect player by chau (powered by HTML5 Audio API)</h2>
-                            <p class="lead">press <kbd>space</kbd> to <code class="highlighter-rouge">play</code> or <code class="highlighter-rouge">pause</code><br> press <kbd>↑/↓</kbd> to <code class="highlighter-rouge">volume up</code> or <code class="highlighter-rouge">volume down</code></p>
-                        </b-jumbotron>
-                        <!--error content-->
-                        <b-alert show variant="danger" v-if="!isSupported.state">
-                            <h4 class="alert-heading">ERROR!</h4>
-                            <p>Your device is not supported! It is lack of serveral moudles, which are {{ isSupported.list.join(", ") }}.</p>
-                        </b-alert>
-                        <!--SRC Detected-->
-                        <b-alert dismissible variant="warning" :show="sampleRate && sampleRate != 44100" @dismissed="sampleRate=null">
-                            <h4 class="alert-heading">WARNING!</h4>
-                            <p>SRC Detected! Please change Audio Driver sampling rates from {{ sampleRate / 1000 }}khz to 44.1khz.</p>
-                        </b-alert>
-                        <!--uploadedFile-->
-                        <div class="uploadedFile">
-                            <b-input-group class="mb-3">
-                                <b-input-group-prepend>
-                                    <b-dropdown left :text="uploadedFileInput.item[uploadedFileInput.active]">
-                                        <b-dropdown-item v-for="(item,i) in uploadedFileInput.item" @click="dropdownSwicth(uploadedFileInput, i)">{{ item }}</b-dropdown-item>
-                                    </b-dropdown>
-                                </b-input-group-prepend>
-                                <template v-if="uploadedFileInput.active === 0">
-                                <b-form-file placeholder="Choose a music file" accept="audio/*" @change="loadInputFile"></b-form-file>
-                            </template>
-                                <template v-if="uploadedFileInput.active === 1">
-                                <b-form-input v-model="uploadedFileInput.URL"></b-form-input>
-                                <b-input-group-append>
-                                    <b-btn variant="primary" @click="loadMusicURL">Confirm</b-btn>
-                                </b-input-group-append>
-                            </template>
-                            </b-input-group>
-                        </div>
-                        <!--dragContainer-->
-                        <div class="jumbotron jumbotron-fluid dragContainer" @dragenter="dragContainerDragenter" @dragover="dragContainerDragover" @dragleave="dragContainerDragleave" @drop="dragContainerDrop" ref="dragContainer">
-                            <div class="container">
-                                <h2 class="display-5">Drag&amp;drop a music file there to play</h2>
-                            </div>
-                        </div>
-                        <!--demo and options-->
-                        <b-button-group>
-                            <b-dropdown left text="Choose a demo">
-                                <b-dropdown-item v-for="(item,i) in uploadedFileInput.item" @click="loadMusicDemo(i)">Load music demo {{ i + 1 }}</b-dropdown-item>
-                            </b-dropdown>
-                            <b-button variant="info" @click="advanceOptions.show=true">Advance options</b-button>
-                        </b-button-group>
-                        <!--requirements list button-->
-                        <b-button size="lg" variant="warning" block @click="showRequirements=true" style="margin-top: 1vw; white-space: unset;">
-                            This <i>AfterEffect-player</i> is Real-time calculation. Thus, for your best experience, the minimum system requirements(60FPS) is here.
-                        </b-button>
-                    </div>
-                </div>
-            </div>
+            <aftereffect-player class="player" v-if="isPlayed" :url="url" :title="title" :config="playerConfig" @watchfps="watchfps" @onended="onended" />
         </transition>
-        <!--player-->
-        <transition name="fade">
-            <aftereffect-player class="player" v-if="isPlayed" :url="url" @watchfps="watchfps" @onended="onended" />
-        </transition>
-        <!--requirements list modal-->
-        <b-modal v-model="showRequirements" centered title="System Requirements">
-            <b-container fluid>
-                <p><strong>OS: </strong>Windows 7 or later</p>
-                <p><strong>Browser: </strong>Chrome 50+ / Firefox 50+ / Opera 37+ / Edge</p>
-                <p><strong>Processor: </strong>Intel I3 4130 or better</p>
-                <p><strong>Memory: </strong>2GB or better</p>
-                <p><strong>Graphics: </strong>Intel HD Graphics 4400 or better</p>
-                <p><strong>Sound Card: </strong>DirectSound® compatible sound card</p>
-            </b-container>
-            <div slot="modal-footer" class="w-100">
-                <b-btn class="float-right" variant="primary" @click="showRequirements=false">OK!</b-btn>
-            </div>
-        </b-modal>
-        <!--advance options modal-->
-        <b-modal v-model="advanceOptions.show" centered title="Advance Options">
-            <b-container fluid>
-                <fieldset class="fieldset mb-3 py-2">
-                    <legend>FPS</legend>
-                    <div class="mb-2 d-sm-inline-block">
-                        <b-form-checkbox v-model="FPSpanel" :value="true" :unchecked-value="false">
-                            Show FPS
-                        </b-form-checkbox>
-                        <b-form-checkbox v-model="FPSLine" :value="true" :unchecked-value="false">
-                            Log FPS
-                        </b-form-checkbox>
-                    </div>
-                </fieldset>
-                <!--uploadedImage-->
-                <fieldset class="fieldset mb-3">
-                    <legend>Background</legend>
-                    <b-input-group class="mb-3">
-                        <b-input-group-prepend>
-                            <b-dropdown left :text="uploadedImageInput.item[uploadedImageInput.active]">
-                                <b-dropdown-item v-for="(item,i) in uploadedImageInput.item" @click="dropdownSwicth(uploadedImageInput, i)">{{ item }}</b-dropdown-item>
-                            </b-dropdown>
-                        </b-input-group-prepend>
-                        <template v-if="uploadedImageInput.active === 0">
-                        <b-form-file placeholder="Change background" accept="image/*" @change="changeFileBackground"></b-form-file>
-                    </template>
-                        <template v-if="uploadedImageInput.active === 1">
-                        <b-form-input v-model="uploadedImageInput.URL"></b-form-input>
-                        <b-input-group-append>
-                            <b-btn variant="primary" @click="loadBackground">Confirm</b-btn>
-                        </b-input-group-append>
-                    </template>
-                    </b-input-group>
-                </fieldset>
-            </b-container>
-            <div slot="modal-footer" class="w-100">
-                <div class="float-right">
-                    <b-btn variant="danger" @click="reset">Reset</b-btn>
-                    <b-btn variant="primary" @click="advanceOptions.show=false">OK!</b-btn>
-                </div>
-            </div>
-        </b-modal>
-        <!--display FPS line-->
-        <b-modal v-model="FPSLineShow" centered size="lg" :hide-footer="true" title="FPS Line" v-if="FPSLine" @shown="FPSLineResize">
-            <b-container fluid>
-                <echarts :options="FPS_line_Chart" ref="FPSLine" style="width: 766px" v-if="FPSLineShow" />
-            </b-container>
-        </b-modal>
-        <!--FPS-->
-        <transition name="fade">
-            <b-alert show class="FPS" v-if="FPSPanelShow">
-                <div class="row">
-                    <div class="col-auto mr-auto">
-                        <strong>FPS:</strong>
-                        <span class="value" :style="FPSColor">{{FPS}}</span>
-                    </div>
-                    <div class="col-auto">
-                        <button type="button" class="close" aria-label="Close" @click="FPSPanelShow = false">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <transition name="fade">
-                            <button type="button" class="close" style="margin-right: 1vw" v-if="!screenLimit" @click="FPSGaugeChartShowToggle">
-                                {{ FPSGaugeChartShow? "∧" : "∨" }}
-                            </button>
-                        </transition>
-                    </div>
-                </div>
-                <transition name="fade">
-                    <echarts :options="FPS_Gauge_Chart" class="FPS-gauge" ref="FPSGauge" v-if="FPSGaugeChartShow && !screenLimit" />
-                </transition>
-            </b-alert>
-        </transition>
+        <div v-if="!isPlayed" style="text-align: center; padding-top: 20px;">
+            <p>
+                Resolution：
+                <el-input-number
+                    v-model="playerConfig.resolution"
+                    :max="4"
+                    :min="0.1"
+                >
+                </el-input-number>
+            </p>
+            <p>
+                Antialias:
+                <el-radio v-model="playerConfig.antialias" :label="true">enable</el-radio>
+                <el-radio v-model="playerConfig.antialias" :label="false">disable</el-radio>
+            </p>
+            <p>
+                AutoDensity:
+                <el-radio v-model="playerConfig.autoDensity" :label="true">enable</el-radio>
+                <el-radio v-model="playerConfig.autoDensity" :label="false">disable</el-radio>
+            </p>
+            <p>
+                <el-upload
+                    action=""
+                    :limit="1"
+                    ref="upload"
+                    accept="audio/*"
+                    :auto-upload="false"
+                    :on-change="onSelectedFile"
+                    :on-remove="handleRemove"
+                >
+                    <el-button slot="trigger" size="small" type="primary">Select File</el-button>
+                    <el-button style="margin-left: 10px;" size="small" type="success" @click="playMusic">Play</el-button>
+                </el-upload>
+            </p>
+        </div>
+        <!-- <div id="fps" v-if="isPlayed">FPS: {{FPS}}</div> -->
     </div>
 </body>
 <script src="./js/example.js"></script>

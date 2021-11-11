@@ -4,22 +4,21 @@ Vue.component('aftereffect-player', {
         url: {
             type: String,
             require: true
+        },
+        title: {
+            type: String,
+            require: true
+        },
+        config: {
+            type: Object,
         }
     },
     mounted: function() {
         this.init();
-        document.body.addEventListener("keydown", this.keydown.bind(this));
-    },
-    watch: {
-        url: function(curVal) {
-            if (this.player.isInit) {
-                this.player.changeAudio(curVal);
-                this.player.play();
-            }
-        }
+        window.addEventListener("keydown", this.keydown);
     },
     beforeDestory: function() {
-        document.body.removeEventListener("keydown", this.keydown.bind(this));
+        window.removeEventListener("keydown", this.keydown);
     },
     data: function() {
         return {
@@ -29,24 +28,31 @@ Vue.component('aftereffect-player', {
     methods: {
         init: function() {
             var that = this;
-            this.player = afterEffectPlayer.init(
-                this.$refs.player,
-                this.url, {
-                    onended: function(e) {
-                        that.$emit('onended', e);
-                    },
+            const audio = new Audio()
+            audio.src = this.url
+            audio.addEventListener('ended', (e) => {
+                that.$emit('onended', e);
+            })
+            audio.play()
+            var afterEffectPlayer = new AfterEffectPlayer(
+                audio,
+                {
+                    title: this.title,
                     watchFPS: function(FPS, FPS_now) {
                         that.$emit('watchfps', FPS, FPS_now);
+                    },
+                    render: {
+                        ...this.config
                     }
                 }
-            )
-            this.player.play();
+            );
+
+            afterEffectPlayer.mount(this.$refs.player)
+
+            this.player = afterEffectPlayer
         },
         keydown: function(event) {
             var that = this;
-            console.log(213123)
-            this.player.play();
-            console.log(this);
             if (event.keyCode === 32 && that.player.audio) {
                 (that.player.audio.paused) ? that.player.play(): that.player.pause();
             }
@@ -59,6 +65,17 @@ Vue.component('aftereffect-player', {
                 var volume = that.player.audio.volume;
                 volume -= 0.01;
                 that.player.audio.volume = (volume < 0) ? 0 : volume;
+            }
+            if (event.keyCode === 37 && that.player.audio) {
+                var currentTime = that.player.audio.currentTime;
+                currentTime -= 1;
+                that.player.audio.currentTime = (currentTime > 0) ? currentTime : 0;
+            }
+            if (event.keyCode === 39 && that.player.audio) {
+                var currentTime = that.player.audio.currentTime;
+                var duration = that.player.audio.duration;
+                currentTime += 1;
+                that.player.audio.currentTime = (currentTime < duration) ? currentTime : 0;
             }
         }
     },

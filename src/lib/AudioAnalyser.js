@@ -3,105 +3,18 @@ const AudioContext = window.AudioContext || window.webkitAudioContext || window.
 
 
 class AudioAnalyser {
-    constructor(file, options) {
+    constructor() {
         this.audioContext = (AudioContext)? new AudioContext() : null;
         this.audioNode = null;
         this.analyser = null;
-        this.audio = null;
-        this.options = {};
-        if(file) {
-            this.setAudio(file, options);
-        }
     }
 
-    setAudio(file, options = this.options) {
-        const supported = this.isSupport();
-        if(!supported.state) {
-            const warning = `Sorry,you browser seems not to support ${ supported.list.join(", ") }. Please try to use other browsers.`;
-            throw new Error(warning);
-            return warning;
-        }
-
-        if(typeof options === "object") this.options = {...this.options, ...options};
-
-        this.checkType(file);
-
-        return this;
+    initAudio(audio) {
+        this.audio = audio
+        this.getAnalyser()
     }
 
-    isSupport() {
-        let supported = {
-                list:[]
-            };
-
-        if(!AudioContext) supported.list.push("AudioContext");
-
-        if(supported.list.length > 0){
-            supported.state = false;
-            return supported;
-        }
-
-        return { state: true };
-    }
-
-    checkType(file){
-        console.log(file);
-
-        const checkTypeErr = new Error("Input is a illegal param which only is [URL] or [audio Element] or [AudioNode].");
-        if(typeof file === "string"){
-            if(/(blob\:)?(http|https|ftp):\/\/[^\s]*/.test(file)){
-                this.loadMusic(file);
-            }else{
-                throw new Error("This URL is illegal");
-            }
-        }else if(typeof file === "object"){
-            if(file.nodeType === 1){
-                if(file.tagName === "AUDIO"){
-                    file.crossOrigin = "anonymous";
-                    this.audio = file;
-                    this.getAnalyser();
-                }else{
-                    throw checkTypeErr;
-                }
-            }else{
-                if(file instanceof AudioNode){
-                    this.audioBufferSouceNode = file;
-                    this.audioContext = file.context;
-                    this.getAnalyser();
-                }else {
-                    throw checkTypeErr;
-                }
-            }
-        }else{
-            throw checkTypeErr;
-        }
-
-        return this;
-    }
-
-    loadMusic(file){
-        if(!this.audio){
-            this.audio = new Audio();
-            this.audio.crossOrigin = "anonymous";
-            this.audio.style.display = "none";
-            this.audio.onerror = e => {
-                throw  new Error(e);
-            };
-            if(this.options.onended) this.audio.onended = this.options.onended;
-        }
-        this.audio.src = file;
-        return this;
-    }
-
-    getAudio(){
-        return this.audio;
-    }
-
-    getAudioContext(){
-        return this.audioContext;
-    }
-
-    getAnalyser(){
+    getAnalyser() {
         if(!this.audioContext) this.audioContext = new AudioContext();
         if(!this.audioNode) this.audioNode = this.audioContext.createMediaElementSource(this.audio);// audioBufferSouceNode
 
@@ -127,7 +40,7 @@ class AudioAnalyser {
             right: analyserR
         };
 
-        return this;
+        return this.analyser;
     }
 
     getByteFrequency(){

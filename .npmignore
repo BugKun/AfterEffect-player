@@ -1,4 +1,5 @@
+dist/
+node_modules/
 .idea
 /example_bk
 static
-node_modules

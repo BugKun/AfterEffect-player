@@ -1,5 +1,5 @@
 import Player from "./Player"
 
-class AfterEffectPlayer extends Player{}
+window.AfterEffectPlayer = Player
 
-export default AfterEffectPlayer;
+export default Player;

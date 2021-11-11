@@ -1,95 +1,64 @@
 import Drawer from "./Drawer"
 
 
-class Player extends Drawer{
-    constructor(node, file, options) {
+class Player extends Drawer {
+    constructor(audio, options) {
         super();
+        this.options = options
 
-        this.node = null;
-        this.dragging = false;
-        this.isInit = false;
+        this.initAudio(audio)
+        this.initDrawer(options.render || {})
 
-        this.listenMousePosition();
-
-        if(node && file) {
-            this.init(node, file, options);
-        }
+        audio.addEventListener('play', this.onAudioPlay)
+        audio.addEventListener('pause', this.onAudioPause)
+        audio.addEventListener('ended', this.onAudioEnd)
     }
 
-    init(node, file, options){
-        this.node = node;
-
-        this.options.DynamicResolution = true;
-
-        if(typeof options === "object") this.options = {...this.options, ...options};
-
-        super.setAudio(file);
-        this.drawerInit(node, file, options);
-
-        this.isInit = true;
-        return this;
+    mount(el) {
+        el.appendChild(this.app.view)
     }
 
-    changeAudio(file){
-        if(!this.isInit) return;
-        super.setAudio(file);
-        return this;
+    onAudioPlay = () => {
+        this.app.ticker.start()
     }
 
-    play(){
-        if(this.audio) {
+    onAudioPause = () => {
+        this.tickerStop()
+    }
+
+    onAudioEnd = () => {
+        this.tickerStop()
+    }
+
+    play() {
+        if (this.audio) {
             this.audio.play();
-        }else{
+        } else {
             throw new Error("no audio");
         }
         return this;
     }
 
-    pause(){
-        if(this.audio) {
+    pause() {
+        if (this.audio) {
             this.audio.pause();
-        }else{
+        } else {
             throw new Error("no audio");
         }
         return this;
     }
 
-    listenMousePosition(){
-        const canvas = this.canvas,
-            body = document.body;
+    stop() {
+        this.pause()
+        this.audio.currentTime = 0
+    }
 
-        canvas.addEventListener("mousedown", e => {
-            if(this.audio && this.audio.ended) return;
-            const vertical = e.pageY > (this.progressBar.top - this.progressBar.pionterRadius) && e.pageY < (this.progressBar.top + this.progressBar.pionterRadius),
-                horizontal = e.pageX > this.progressBar.start && e.pageX < this.progressBar.end;
-            if(vertical && horizontal){
-                this.dragging = true;
-                const skipPoint = (e.pageX - this.progressBar.start) / this.progressBar.width * this.audio.duration;
-                this.audio.currentTime = skipPoint;
-            }
-        });
-
-        body.addEventListener('mousemove', e => {
-            if(!this.dragging) return;
-            const skipPoint = (e.pageX - this.progressBar.start) / this.progressBar.width * this.audio.duration;
-            this.audio.currentTime = skipPoint;
-        });
-
-        body.addEventListener('mouseup', e => {
-            if(!this.dragging) return;
-            this.dragging = false;
-            if(this.audio && this.audio.ended) return;
-            const skipPoint = (e.pageX - this.progressBar.start) / this.progressBar.width * this.audio.duration;
-            this.audio.currentTime = skipPoint;
-        });
-
-        body.addEventListener('mouseleave', e => {
-            if(!this.dragging) return;
-            this.dragging = false;
-            if(this.audio && this.audio.ended) return;
-            const skipPoint = (e.pageX - this.progressBar.start) / this.progressBar.width * this.audio.duration;
-            this.audio.currentTime = skipPoint;
-        });
+    destroy() {
+        this.stop()
+        this.audio.removeEventListener('pause', this.onAudioPause)
+        this.audio.removeEventListener('ended', this.onAudioEnd)
+        this.audio.removeEventListener('play', this.onAudioPlay)
+        this.audio = null
     }
 }
 
